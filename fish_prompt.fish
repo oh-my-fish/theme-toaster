@@ -24,11 +24,13 @@ function __toaster_current_folder
 end
 
 function __toaster_git_status_codes
-  echo (git status --porcelain ^/dev/null | sed -E 's/(^.{3}).*/\1/' | tr -d ' \n')
+  echo -n (git status --porcelain ^/dev/null | sed -E 's/(^.{3}).*/\1/' | tr -d ' \n')
+  git config status.showuntrackedfiles | grep no >/dev/null; and echo -n '?'
+  echo
 end
 
 function __toaster_git_branch_name
-  echo (git rev-parse --abbrev-ref HEAD ^/dev/null)
+  git_branch_name
 end
 
 function __toaster_rainbow
@@ -38,7 +40,7 @@ function __toaster_rainbow
 end
 
 function __toaster_git_status_icons
-  set -l git_status (__toaster_git_status_codes)
+  set -l git_status $argv[1]
 
   __toaster_rainbow $git_status $__toaster_color_pink 'D'
   __toaster_rainbow $git_status $__toaster_color_orange 'R'
@@ -51,15 +53,15 @@ end
 
 function __toaster_git_status
   # In git
-  if test -n (__toaster_git_branch_name)
-
+  if git_is_repo;
     __toaster_color_echo $__toaster_color_blue " git"
     __toaster_color_echo $__toaster_color_white ":"(__toaster_git_branch_name)
 
-    if test -n (__toaster_git_status_codes)
+    set -l git_status (__toaster_git_status_codes)
+    if test -n $git_status
       __toaster_color_echo $__toaster_color_pink ' ●'
       __toaster_color_echo $__toaster_color_white ' [^._.^]ﾉ'
-      __toaster_git_status_icons
+      __toaster_git_status_icons $git_status
     else
       __toaster_color_echo $__toaster_color_green ' ○'
     end
