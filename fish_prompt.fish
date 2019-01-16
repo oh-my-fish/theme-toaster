@@ -24,11 +24,11 @@ function __toaster_current_folder
 end
 
 function __toaster_git_status_codes
-  echo (git status --porcelain ^/dev/null | sed -E 's/(^.{3}).*/\1/' | tr -d ' \n')
+  echo (git status --porcelain 2> /dev/null | sed -E 's/(^.{3}).*/\1/' | tr -d ' \n')
 end
 
 function __toaster_git_branch_name
-  echo (git rev-parse --abbrev-ref HEAD ^/dev/null)
+  echo (git rev-parse --abbrev-ref HEAD 2> /dev/null)
 end
 
 function __toaster_rainbow
